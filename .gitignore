@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env
+
+# log files
+logs
+*.log
+
+# OS/IDE files
+.DS_Store
+*.swp
+.vscode
