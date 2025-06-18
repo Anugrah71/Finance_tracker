@@ -19,6 +19,20 @@ const addTransaction = async (req, res) => {
   }
 };
 
+const deleteTransaction = async (req, res) => {
+  try {
+    await Transaction.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+
+    res.status(200).json({ message: 'Transaction deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server Error', error: err.message });
+  }
+};
+
+
 // ✅ Already correct
 const getTransactions = async (req, res) => {
   try {
@@ -31,5 +45,6 @@ const getTransactions = async (req, res) => {
 
 module.exports = {
   addTransaction,
-  getTransactions
+  getTransactions,
+  deleteTransaction
 };
