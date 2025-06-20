@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "../utils/api";
+import api from "../utils/api";
 import Navbar from "../components/Navbar";
+
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
@@ -14,10 +15,11 @@ function Dashboard() {
   const uniqueCategories = [
     ...new Set(transactions.map((t) => t.category.toLowerCase())),
   ];
+  const navigate = useNavigate();
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/transactions/${id}`, {
+      await api.delete(`/transactions/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -29,8 +31,6 @@ function Dashboard() {
     }
   };
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       navigate("/login");
@@ -40,7 +40,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await axios.get("transactions", {
+        const res = await api.get("transactions", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -56,7 +56,7 @@ function Dashboard() {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
+      const res = await api.post(
         "transactions/add",
         { amount, description, type, category },
         {
@@ -66,10 +66,7 @@ function Dashboard() {
         }
       );
       setTransactions([res.data, ...transactions]);
-      setAmount("");
-      setDescription("");
-      setCategory("");
-      setType("income");
+      
     } catch (err) {
       console.error("Error adding transaction:", err);
     }

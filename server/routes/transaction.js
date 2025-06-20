@@ -1,15 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const auth = require('../middleware/auth');
+const auth = require("../middleware/auth");
 const {
   addTransaction,
   getTransactions,
-  deleteTransaction
-} = require('../controllers/transactionController');
+  deleteTransaction,
+} = require("../controllers/transactionController");
 
-// Clean route declarations
-router.post('/add', auth, addTransaction);
-router.get('/', auth, getTransactions);
-router.delete('/:id', auth, deleteTransaction);
+router.post("/add", auth, addTransaction);
+router.get("/", auth, getTransactions);
+router.delete("/:id", auth, deleteTransaction);
 
 module.exports = router;
