@@ -14,7 +14,11 @@ const Chart = ({ income, expense }) => {
     ],
   };
 
-  return <Pie data={data} />;
+  return (
+  <div style={{ width: 300, height: 300 }}>
+    <Pie data={data} />
+  </div>
+);
 };
 
 export default Chart;

@@ -2,92 +2,91 @@ import React, { useState } from "react";
 import api from "../utils/api";
 
 const TransactionForm = ({ onAdd }) => {
-  const [formData, setFormData] = useState({
-    type: "income",
-    amount: "",
-    category: "",
-    description: "",
-  });
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState("income");
+  const [category, setCategory] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-
-    try {
-      const res = await api.post("/transactions/add", formData, {
+  const handleAddForm = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await api.post(
+      "transactions/add",
+      { amount, description, type, category },
+      {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      });
-      onAdd(res.data); // pass the new transaction back to parent
-      setFormData({
-        type: "income",
-        amount: "",
-        category: "",
-        description: "",
-      });
-    } catch (err) {
-      console.error("Error adding transaction:", err);
-      alert("Failed to add transaction.");
-    }
-  };
+      }
+    );
+    onAdd(res.data); // ✅ send new transaction to Dashboard
+    // clear form
+    setAmount("");
+    setDescription("");
+    setType("income");
+    setCategory("");
+  } catch (err) {
+    console.error("Error adding transaction:", err);
+    alert("Failed to add transaction.");
+  }
+};
+
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mb-4 p-3 border rounded shadow-sm bg-light"
-    >
-      <div className="mb-2">
-        <select
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          className="form-select"
-        >
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
+    <>
+      {/* Add Transaction Form */}
+      <div className="card mb-4">
+        <div className="card-body">
+          <h4 className="mb-3">Add Transaction</h4>
+          <form onSubmit={handleAddForm} className="row g-3">
+            <div className="col-md-3">
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Amount"
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                required
+              />
+            </div>
+            <div className="col-md-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-md-2">
+              <select
+                className="form-select"
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+              >
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </div>
+            <div className="col-md-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              />
+            </div>
+            <div className="col-md-2">
+              <button type="submit" className="btn btn-primary w-100">
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div className="mb-2">
-        <input
-          type="number"
-          name="amount"
-          value={formData.amount}
-          onChange={handleChange}
-          placeholder="Amount"
-          className="form-control"
-          required
-        />
-      </div>
-      <div className="mb-2">
-        <input
-          type="text"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category"
-          className="form-control"
-          required
-        />
-      </div>
-      <div className="mb-2">
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Description"
-          className="form-control"
-        />
-      </div>
-      <button type="submit" className="btn btn-primary">
-        Add Transaction
-      </button>
-    </form>
+    </>
   );
 };
 
